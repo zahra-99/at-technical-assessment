@@ -85,3 +85,29 @@ combined_plots <- mapply(grid.arrange, hist_plots, boxplot_plots, SIMPLIFY = FAL
 
 # Plot histograms and boxplots side by side
 grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
+
+
+# Scatter plots -----------------------------------------------------------
+
+# variables to seek relationships
+year_vs_price_scatter <- ggplot(data, aes(x = year, y = price)) +
+        geom_point(colour = "blue") +
+        labs(title = paste("Scatter plot of year vs price"),
+             x = "year", y = "price") +
+        theme_minimal()
+
+year_vs_mileage_scatter <- ggplot(data, aes(x = year, y = mileage)) +
+  geom_point(colour = "blue") +
+  labs(title = paste("Scatter plot of year vs mileage"),
+       x = "year", y = "mileage") +
+  theme_minimal()
+
+mileage_vs_price_scatter <- ggplot(data, aes(x = mileage, y = price)) +
+  geom_point(colour = "blue") +
+  labs(title = paste("Scatter plot of mileage vs price"),
+       x = "mileage", y = "price") +
+  theme_minimal()
+
+# Plot scatter plots using grid.arrange
+grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
+
