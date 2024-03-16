@@ -28,6 +28,18 @@ unique(data$make) # BMW only
 # how many models are included in the data
 length(unique(data$model)) # 58 models
 
+
+# Missingness -------------------------------------------------------------
+
+# Apply function to each column
+na_counts <- lapply(data, function(col) sum(is.na(col)))
+
+# Convert the result to a dataframe
+na_counts_df <- data.frame(column = names(data), na_count = unlist(na_counts), row.names = NULL)
+
+# Filter out rows with 0 NA count
+na_counts_df <- na_counts_df[na_counts_df$na_count != 0, ]
+
 # Bar plots for categorical variables -------------------------------------
 
 # Create a function to generate bar plots for categorical variables
