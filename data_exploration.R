@@ -55,3 +55,33 @@ plot_categorical(data, "area")
 # using substring to get more broader categories
 plot_categorical(data %>% mutate(model_larger_cat = as.factor(substr(model, 0, 1))), "model_larger_cat")
 plot_categorical(data %>% mutate(area_larger_cat = as.factor(substr(area, 0, 1))), "area_larger_cat")
+
+# Plots for continuous variables ------------------------------------------
+
+# Select continuous variables
+continuous_vars <- c("mileage", "price", "price_position")
+
+# Create histograms for all continuous variables
+hist_plots <- lapply(continuous_vars, function(var) {
+  
+  ggplot(data, aes(x = !!as.name(var))) +
+    geom_histogram(bins = ceiling(sqrt(length(data[[var]]))), 
+                   fill = "red", color = "black") +
+    labs(title = paste("Histogram of", var), x = var, y = "Frequency") +
+    theme_minimal()
+  
+})
+
+# Create boxplots for all continuous variables
+boxplot_plots <- lapply(continuous_vars, function(var) {
+  ggplot(data, aes(y = !!as.name(var))) +
+    geom_boxplot(fill = "red", color = "black") +
+    labs(title = paste("Boxplot of", var), x = "", y = var) +
+    theme_minimal()
+})
+
+# Arrange plots side by side
+combined_plots <- mapply(grid.arrange, hist_plots, boxplot_plots, SIMPLIFY = FALSE)
+
+# Plot histograms and boxplots side by side
+grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
