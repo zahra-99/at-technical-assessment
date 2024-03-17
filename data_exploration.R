@@ -234,3 +234,15 @@ ggplot(data = melt(phi_matrix), aes(x = Var1, y = Var2, fill = value)) +
   labs(title = "Correlation Heatmap of Binary Feature Columns") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+
+
+# ANOVA price position and feature cols -----------------------------------
+
+# Perform ANOVA for each binary feature column
+anova_results <- lapply(binary_features, function(feature) {
+  aov_result <- aov(price_position ~ get(feature), data = data_removed_nas)
+  return(summary(aov_result))
+})
+
+# View the ANOVA results
+print(anova_results)
