@@ -102,18 +102,22 @@ grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
 # Scatter plots -----------------------------------------------------------
 
 # variables to seek relationships
+
+# year vs price scatter plot
 year_vs_price_scatter <- ggplot(data, aes(x = year, y = price)) +
         geom_point(colour = "blue") +
         labs(title = paste("Scatter plot of year vs price"),
              x = "year", y = "price") +
         theme_minimal()
 
+# year vs mileage scatter plot
 year_vs_mileage_scatter <- ggplot(data, aes(x = year, y = mileage)) +
   geom_point(colour = "blue") +
   labs(title = paste("Scatter plot of year vs mileage"),
        x = "year", y = "mileage") +
   theme_minimal()
 
+# mileage vs price scatter plot
 mileage_vs_price_scatter <- ggplot(data, aes(x = mileage, y = price)) +
   geom_point(colour = "blue") +
   labs(title = paste("Scatter plot of mileage vs price"),
@@ -123,3 +127,49 @@ mileage_vs_price_scatter <- ggplot(data, aes(x = mileage, y = price)) +
 # Plot scatter plots using grid.arrange
 grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
 
+# Correlation coefficient tests -------------------------------------------
+
+# Omit all NAs from the dataset
+data_removed_nas <- na.omit(data)
+
+# Compute Pearson's correlation coefficient
+pearson_cor <- cor(data_removed_nas[c("year", "mileage", "price")], method = "pearson")
+
+# Test significance of Pearson's correlation
+# Sample size
+n <- nrow(data_removed_nas)
+
+# Degrees of freedom for Pearson's correlation
+df <- n - 2
+
+# Calculate t-statistic for Pearson's correlation
+t_stat_pearson <- pearson_cor * sqrt(df) / sqrt(1 - pearson_cor^2)
+
+# Calculate p-value for Pearson's correlation
+p_value_pearson <- 2 * pt(abs(t_stat_pearson), df = df, lower.tail = FALSE)
+
+# Print the correlation matrix
+cat("Pearson's correlation coefficient:\n")
+print(pearson_cor)
+
+# Compute Spearman's correlation coefficient
+spearman_cor_year_price <- cor.test(data_removed_nas$year, data_removed_nas$price, method = "spearman")
+spearman_cor_year_mileage <- cor.test(data_removed_nas$year, data_removed_nas$mileage, method = "spearman")
+spearman_cor_mileage_price <- cor.test(data_removed_nas$mileage, data_removed_nas$price, method = "spearman")
+
+# check if p-value is less than significance level (0.05)
+cat("\nSpearman's correlation coefficient:\n")
+print(spearman_cor_year_price)
+print(spearman_cor_year_mileage)
+print(spearman_cor_mileage_price)
+
+# Compute kendall's correlation coefficient
+kendall_cor_year_price <- cor.test(data_removed_nas$year, data_removed_nas$price, method = "kendall")
+kendall_cor_year_mileage <- cor.test(data_removed_nas$year, data_removed_nas$mileage, method = "kendall")
+kendall_cor_mileage_price <- cor.test(data_removed_nas$mileage, data_removed_nas$price, method = "kendall")
+
+# check if p-value is less than significance level (0.05)
+cat("\nkendall's correlation coefficient:\n")
+print(kendall_cor_year_price)
+print(kendall_cor_year_mileage)
+print(kendall_cor_mileage_price)
