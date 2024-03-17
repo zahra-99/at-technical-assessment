@@ -10,6 +10,8 @@ library(ggplot2)
 library(reshape2)
 #install.packages("gridExtra")
 library(gridExtra)
+#install.packages("Hmisc")
+library(Hmisc)
 
 # Data loading ------------------------------------------------------------
 
@@ -205,7 +207,7 @@ print(p_values)
 # List of binary feature columns
 binary_features <- c("feature_1", "feature_2", "feature_3", "feature_4", "feature_5", "feature_6", "feature_7", "feature_8", "feature_9", "feature_10")
 
-# Reshape data for plotting (assuming 'cars_data' is in long format)
+# Reshape data for plotting
 binary_data <- melt(data_removed_nas[, binary_features])
 
 # Plot stacked bar plot
@@ -217,3 +219,18 @@ ggplot(binary_data, aes(x = variable, fill = factor(value))) +
   scale_fill_manual(values = c("0" = "blue", "1" = "red"), name = "Value") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Correlation heatmap feature cols ----------------------------------------
+
+# Calculate the phi coefficient matrix
+phi_matrix <- rcorr(as.matrix(data_removed_nas[, binary_features]), type = "pearson")$r
+
+# Create a heatmap
+ggplot(data = melt(phi_matrix), aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-1, 1),
+                       name = "Phi Coefficient") +
+  labs(title = "Correlation Heatmap of Binary Feature Columns") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
