@@ -199,3 +199,21 @@ for (i in 1:length(categorical_vars)) {
 
 # Print the p-values matrix
 print(p_values)
+
+# Feature columns stacked bar plot ----------------------------------------
+
+# List of binary feature columns
+binary_features <- c("feature_1", "feature_2", "feature_3", "feature_4", "feature_5", "feature_6", "feature_7", "feature_8", "feature_9", "feature_10")
+
+# Reshape data for plotting (assuming 'cars_data' is in long format)
+binary_data <- melt(data_removed_nas[, binary_features])
+
+# Plot stacked bar plot
+ggplot(binary_data, aes(x = variable, fill = factor(value))) +
+  geom_bar(position = "stack") +
+  labs(title = "Occurrences of 1s and 0s in Binary Feature Columns",
+       x = "Binary Feature Columns",
+       y = "Count") +
+  scale_fill_manual(values = c("0" = "blue", "1" = "red"), name = "Value") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
