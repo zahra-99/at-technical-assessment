@@ -68,7 +68,8 @@ plot_categorical(data, "area")
 plot_categorical(data %>% mutate(model_larger_cat = as.factor(substr(model, 0, 1))), "model_larger_cat")
 plot_categorical(data %>% mutate(area_larger_cat = as.factor(substr(area, 0, 1))), "area_larger_cat")
 
-# Plots for continuous variables ------------------------------------------
+
+# Hist and boxplots for continous variables -------------------------------
 
 # Select continuous variables
 continuous_vars <- c("mileage", "price", "price_position")
@@ -173,3 +174,24 @@ cat("\nkendall's correlation coefficient:\n")
 print(kendall_cor_year_price)
 print(kendall_cor_year_mileage)
 print(kendall_cor_mileage_price)
+
+# Chi squared tests -------------------------------------------------------
+
+# List of categorical variables
+categorical_vars <- c("fuel_type", "body_type", "transmission", "model", "colour", "area", "engine_size")
+
+# Create an empty matrix to store the p-values
+p_values <- matrix(NA, nrow = length(categorical_vars), ncol = length(categorical_vars), dimnames = list(categorical_vars, categorical_vars))
+
+# Loop through pairs of variables
+for (i in 1:length(categorical_vars)) {
+  for (j in 1:length(categorical_vars)) {
+    # Perform chi-squared test
+    chi_sq_test <- chisq.test(table(data_removed_nas[[categorical_vars[i]]], data_removed_nas[[categorical_vars[j]]]))
+    # Store the p-value in the matrix
+    p_values[i, j] <- chi_sq_test$p.value
+  }
+}
+
+# Print the p-values matrix
+print(p_values)
