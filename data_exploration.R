@@ -186,10 +186,14 @@ p_values <- matrix(NA, nrow = length(categorical_vars), ncol = length(categorica
 # Loop through pairs of variables
 for (i in 1:length(categorical_vars)) {
   for (j in 1:length(categorical_vars)) {
+    # Create a two way table of counts
+    two_way_table <- table(data_removed_nas[[categorical_vars[i]]], data_removed_nas[[categorical_vars[j]]])
     # Perform chi-squared test
-    chi_sq_test <- chisq.test(table(data_removed_nas[[categorical_vars[i]]], data_removed_nas[[categorical_vars[j]]]))
+    chi_sq_test <- chisq.test(two_way_table)
     # Store the p-value in the matrix
     p_values[i, j] <- chi_sq_test$p.value
+    
+    # print(two_way_table)
   }
 }
 
