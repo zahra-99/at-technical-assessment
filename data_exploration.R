@@ -12,6 +12,8 @@ library(reshape2)
 library(gridExtra)
 #install.packages("Hmisc")
 library(Hmisc)
+#install.packages("randomForest")
+library(randomForest)
 
 # Data loading ------------------------------------------------------------
 
@@ -246,3 +248,19 @@ anova_results <- lapply(binary_features, function(feature) {
 
 # View the ANOVA results
 print(anova_results)
+
+
+# Random forest feature importance ----------------------------------------
+
+# as the target variable representing the position of price
+
+# Fit a random forest model
+model <- randomForest(price_position ~ ., 
+                      data = data_removed_nas[, c("price_position", binary_features)], 
+                      importance = TRUE)
+
+# Visualize feature importance
+varImpPlot(model)
+
+# print tabulated values for feature importance
+print(importance(model))
