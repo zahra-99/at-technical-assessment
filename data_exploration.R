@@ -21,16 +21,19 @@ library(randomForest)
 data <- read.csv("at-technical-assessment-_2023.csv")
 
 # number of rows in the data set
-nrow(data) # 9753 cars
+n_cars <- nrow(data)
 
 # column names
-names(data) 
+colnames <- names(data) 
+
+# number of column names
+n_colnames <- length(colnames)
 
 # what makes are there in the data
-unique(data$make) # BMW only
+make <- unique(data$make) 
 
 # how many models are included in the data
-length(unique(data$model)) # 58 models
+n_models <- length(unique(data$model)) # 58 models
 
 
 # Missingness -------------------------------------------------------------
@@ -56,21 +59,21 @@ plot_categorical <- function(data, var) {
 }
 
 # Get the list of categorical variables
-cat_vars <- c("body_type", "fuel_type", "transmission", "colour", "year", "engine_size")
+cat_vars <- c("body_type", "fuel_type", "transmission", "colour") #, "year", "engine_size"
 
 # Create bar plots for each categorical variable
-plots <- lapply(cat_vars, function(var) plot_categorical(data, var))
+cat_bar_plots <- lapply(cat_vars, function(var) plot_categorical(data, var))
 
 # Arrange the plots in a grid
-grid.arrange(grobs = plots, ncol = 2)
+#grid.arrange(grobs = cat_bar_plots, ncol = 2)
 
 # model and area plots
-plot_categorical(data, "model")
-plot_categorical(data, "area")
+models_plot <- plot_categorical(data, "model")
+area_plot <- plot_categorical(data, "area")
 
 # using substring to get more broader categories
-plot_categorical(data %>% mutate(model_larger_cat = as.factor(substr(model, 0, 1))), "model_larger_cat")
-plot_categorical(data %>% mutate(area_larger_cat = as.factor(substr(area, 0, 1))), "area_larger_cat")
+models_substr_plot <- plot_categorical(data %>% mutate(model_larger_cat = as.factor(substr(model, 0, 1))), "model_larger_cat")
+area_substr_plot <- plot_categorical(data %>% mutate(area_larger_cat = as.factor(substr(area, 0, 1))), "area_larger_cat")
 
 
 # Hist and boxplots for continous variables -------------------------------
@@ -101,7 +104,7 @@ boxplot_plots <- lapply(continuous_vars, function(var) {
 combined_plots <- mapply(grid.arrange, hist_plots, boxplot_plots, SIMPLIFY = FALSE)
 
 # Plot histograms and boxplots side by side
-grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
+#grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
 
 
 # Scatter plots -----------------------------------------------------------
@@ -130,7 +133,7 @@ mileage_vs_price_scatter <- ggplot(data, aes(x = mileage, y = price)) +
   theme_minimal()
 
 # Plot scatter plots using grid.arrange
-grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
+#grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
 
 # Correlation coefficient tests -------------------------------------------
 
@@ -154,8 +157,8 @@ t_stat_pearson <- pearson_cor * sqrt(df) / sqrt(1 - pearson_cor^2)
 p_value_pearson <- 2 * pt(abs(t_stat_pearson), df = df, lower.tail = FALSE)
 
 # Print the correlation matrix
-cat("Pearson's correlation coefficient:\n")
-print(pearson_cor)
+# cat("Pearson's correlation coefficient:\n")
+# print(pearson_cor)
 
 # Compute Spearman's correlation coefficient
 spearman_cor_year_price <- cor.test(data_removed_nas$year, data_removed_nas$price, method = "spearman")
@@ -163,10 +166,10 @@ spearman_cor_year_mileage <- cor.test(data_removed_nas$year, data_removed_nas$mi
 spearman_cor_mileage_price <- cor.test(data_removed_nas$mileage, data_removed_nas$price, method = "spearman")
 
 # check if p-value is less than significance level (0.05)
-cat("\nSpearman's correlation coefficient:\n")
-print(spearman_cor_year_price)
-print(spearman_cor_year_mileage)
-print(spearman_cor_mileage_price)
+# cat("\nSpearman's correlation coefficient:\n")
+# print(spearman_cor_year_price)
+# print(spearman_cor_year_mileage)
+# print(spearman_cor_mileage_price)
 
 # Compute kendall's correlation coefficient
 kendall_cor_year_price <- cor.test(data_removed_nas$year, data_removed_nas$price, method = "kendall")
@@ -174,10 +177,10 @@ kendall_cor_year_mileage <- cor.test(data_removed_nas$year, data_removed_nas$mil
 kendall_cor_mileage_price <- cor.test(data_removed_nas$mileage, data_removed_nas$price, method = "kendall")
 
 # check if p-value is less than significance level (0.05)
-cat("\nkendall's correlation coefficient:\n")
-print(kendall_cor_year_price)
-print(kendall_cor_year_mileage)
-print(kendall_cor_mileage_price)
+# cat("\nkendall's correlation coefficient:\n")
+# print(kendall_cor_year_price)
+# print(kendall_cor_year_mileage)
+# print(kendall_cor_mileage_price)
 
 # Chi squared tests -------------------------------------------------------
 
@@ -202,7 +205,7 @@ for (i in 1:length(categorical_vars)) {
 }
 
 # Print the p-values matrix
-print(p_values)
+#print(p_values)
 
 # Feature columns stacked bar plot ----------------------------------------
 
@@ -213,7 +216,7 @@ binary_features <- c("feature_1", "feature_2", "feature_3", "feature_4", "featur
 binary_data <- melt(data_removed_nas[, binary_features])
 
 # Plot stacked bar plot
-ggplot(binary_data, aes(x = variable, fill = factor(value))) +
+feature_cols_counts_plot <- ggplot(binary_data, aes(x = variable, fill = factor(value))) +
   geom_bar(position = "stack") +
   labs(title = "Occurrences of 1s and 0s in Binary Feature Columns",
        x = "Binary Feature Columns",
@@ -229,7 +232,7 @@ ggplot(binary_data, aes(x = variable, fill = factor(value))) +
 phi_matrix <- rcorr(as.matrix(data_removed_nas[, binary_features]), type = "pearson")$r
 
 # Create a heatmap
-ggplot(data = melt(phi_matrix), aes(x = Var1, y = Var2, fill = value)) +
+features_heatmap <- ggplot(data = melt(phi_matrix), aes(x = Var1, y = Var2, fill = value)) +
   geom_tile(color = "white") +
   scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-1, 1),
                        name = "Phi Coefficient") +
@@ -238,17 +241,23 @@ ggplot(data = melt(phi_matrix), aes(x = Var1, y = Var2, fill = value)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
 
 
+# Bartlett test before ANOVA ----------------------------------------------
+
+bartlett_test_results <- lapply(binary_features, function(feature) {
+  bartlett_test_result <- bartlett.test(as.formula(paste("price_position ~", feature)), data_removed_nas)
+  return(bartlett_test_result)
+})
+
+print(bartlett_test_results)
+
 # ANOVA price position and feature cols -----------------------------------
 
 # Perform ANOVA for each binary feature column
-anova_results <- lapply(binary_features, function(feature) {
-  aov_result <- aov(price_position ~ get(feature), data = data_removed_nas)
-  return(summary(aov_result))
-})
+aov_result_feature4 <- summary(aov(price_position ~ feature_4, data = data_removed_nas))
+aov_result_feature8 <- summary(aov(price_position ~ feature_8, data = data_removed_nas))
 
 # View the ANOVA results
-print(anova_results)
-
+#print(anova_results)
 
 # Random forest feature importance ----------------------------------------
 
@@ -260,7 +269,22 @@ model <- randomForest(price_position ~ .,
                       importance = TRUE)
 
 # Visualize feature importance
-varImpPlot(model)
+feature_importance_plot <- varImpPlot(model)
 
 # print tabulated values for feature importance
-print(importance(model))
+feature_importance_table <- arrange(as.data.frame(importance(model)), -`%IncMSE`) %>%
+                                  mutate(`%IncMSE` = round(`%IncMSE`, 1),
+                                         IncNodePurity = round(IncNodePurity, 1))
+
+# Chi squared feature association -----------------------------------------
+
+# Perform chi-squared test for each binary feature column
+chi_squared_results <- lapply(binary_features, function(feature) {
+  contingency_table <- table(data_removed_nas$price_position, data_removed_nas[[feature]])
+  chi_squared_result <- chisq.test(contingency_table)
+  return(chi_squared_result)
+})
+
+# View the results
+names(chi_squared_results) <- binary_features
+#print(chi_squared_results)
