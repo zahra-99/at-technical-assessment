@@ -141,6 +141,8 @@ A random forest model was used to also confirm the importance of feature 4.
 - Features 1 & 2, 2 & 6, 2 & 9 and 8 & 7 are correlated.
 - Features 4 has an association with price position and also in predicting price position.
 
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
 ## Further Development
 
 - Regression analysis
