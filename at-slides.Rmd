@@ -1,0 +1,150 @@
+---
+title: "AutoTrader Technical Assessment"
+author: "Zahra Ahmed"
+date: "2024-03-22"
+output: ioslides_presentation
+---
+
+```{r setup, include = FALSE}
+source("data_exploration.R")
+
+#install.packages("knitr)
+library(knitr)
+#install.packages("kableExtra")
+library(kableExtra)
+
+```
+
+## Dataset
+
+- The dataset contains information on `r n_cars` cars.
+
+- The only make available in the data is `r make`
+
+- With data on `r n_models` different models 
+
+- `r n_colnames` different fields were provided
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Columns
+
+`r kable(data.frame(colnames[1:12], colnames[13:24]), col.names = NULL) %>% kable_styling(font_size = 12)`
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+### Missingness
+
+`r kable(data.frame(na_counts_df, row.names = NULL), col.names = c("Column name", "Number of missing values")) %>% kable_styling(font_size = 16)`
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+```{r categorical bar plots, echo=FALSE}
+grid.arrange(grobs = cat_bar_plots, ncol = 2)
+```
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+```{r continuous hist and box plots, echo=FALSE}
+grid.arrange(grobs = combined_plots, ncol = length(continuous_vars))
+```
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+```{r scatter plots, echo=FALSE, warning=FALSE}
+grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
+```
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+### Correlation coefficient
+
+1. Pearson's correlation coefficient
+2. Spearman's rho rank correlation coefficient
+3. Kendall's tau rank correlation coefficient
+
+#### Results:
+
+- Year and Price: `r spearman_cor_year_price$estimate`
+- Year and Mileage: `r kendall_cor_year_mileage$estimate`
+- Mileage and Price: `r spearman_cor_mileage_price$estimate`
+
+These result were all statistically significant.
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Data Exploration
+
+### Chi-squared test
+
+To assess the independence or association between categorical variables in the dataset:
+
+- Fuel type and transmission
+- Colour and model
+- Engine size and transmission
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Feature Analysis
+
+```{r feature counts bars, echo=FALSE} 
+feature_cols_counts_plot
+```
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Feature Analysis
+
+```{r feature heatmap, echo=FALSE}
+features_heatmap
+```
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Feature Analysis
+
+### ANOVA
+
+Feature 4 had a statistically significant result. 
+
+### Chi squared test
+
+Feature 4 was the only variable with a statistically significant association with the price position, followed by Feature 7 with a slightly higher p-value.
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Feature Analysis
+
+### Feature Importance
+
+A random forest model was used to also confirm the importance of feature 4.
+
+`r kable(feature_importance_table[1,0:2]) %>% kable_styling(font_size = 12)`
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
+
+## Summary
+
+- Price position is normally distributed.
+- There is a statistically significant correlation between year and price, year and mileage, mileage and price.
+- There are associations between many of the categorical variables.
+- Features 1 & 2, 2 & 6, 2 & 9 and 8 & 7 are correlated.
+- Features 4 has an association with price position and also in predicting price position.
+
+## Further Development
+
+- Regression analysis
+- Dimensionality reduction
+- Clustering
+
+<IMG style="position:absolute;bottom:2%;left:3%;width:30%;"SRC="`r "Logo/at-logo.png"`">
