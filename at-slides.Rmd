@@ -85,6 +85,10 @@ These result were all statistically significant.
 
 ## Data Exploration
 
+### Regression Analysis
+
+For every 1 unit increase in mileage, the price decreases by `r round(lm_model$coefficients[2], 2)` [`r round(confint_lm_model[2, 1], 2)`, `r round(confint_lm_model[2, 2], 2)`].
+
 ### Chi-squared test
 
 To assess the independence or association between categorical variables in the dataset:

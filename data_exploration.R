@@ -132,6 +132,21 @@ mileage_vs_price_scatter <- ggplot(data, aes(x = mileage, y = price)) +
        x = "mileage", y = "price") +
   theme_minimal()
 
+
+# Fit the linear regression model
+lm_model <- lm(price ~ mileage, data = data)
+
+# confidence intervals
+confint_lm_model <- confint(lm_model)
+
+# Residual analysis
+plot(lm_model, which = 1)  # Residuals vs. Fitted values
+plot(lm_model, which = 2)  # Normal Q-Q plot
+plot(lm_model, which = 3)  # Scale-location plot
+plot(lm_model, which = 4)  # Residuals vs. Leverage
+
+summary(lm_model)
+
 # Plot scatter plots using grid.arrange
 #grid.arrange(grobs = list(year_vs_price_scatter, year_vs_mileage_scatter, mileage_vs_price_scatter), nrow = 3)  # Change the number of columns as needed
 
